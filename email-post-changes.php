@@ -108,8 +108,8 @@ class Email_Post_Changes {
 		$title = wp_specialchars_decode( $title, ENT_QUOTES );
 
 		wp_mail(
-			$to = get_option( 'admin_email' ),
-			$sub = sprintf( __( '[%s] %s %d changed: %s' ), $blogname, $right_title, $this->right_post->ID, $title ),
+			get_option( 'admin_email' ),
+			sprintf( __( '[%s] %s %d changed: %s' ), $blogname, $right_title, $this->right_post->ID, $title ),
 			$html_diff
 		);
 	}
