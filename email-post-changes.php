@@ -79,8 +79,10 @@ class Email_Post_Changes {
 			$text_diff .= "===================================================================\n";
 			$text_diff .= "--- $field_title	(revision {$this->left_post->ID} @ {$this->left_post->post_date_gmt})\n";
 			$text_diff .= "+++ $field_title	(revision {$this->right_post->ID} @ {$this->right_post->post_date_gmt})\n";
-			$text_diff .= $diff;
+			$text_diff .= "$diff\n\n";
 		}
+
+		$text_diff = rtrim( $text_diff );
 
 		$this->text_diff = $text_diff;
 
