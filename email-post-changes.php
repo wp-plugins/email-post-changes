@@ -3,8 +3,9 @@
 /*
 Plugin Name: Email Post Changes
 Description: Whenever a change to a post or page is made, those changes are emailed to the blog's admin.
+Version: 0.2
+Plugin URI: http://wordpress.org/extend/plugins/email-post-changes/
 Author: Michael D Adams
-Version: 0.1
 Author URI: http://blogwaffe.com/
 */
 
@@ -120,8 +121,8 @@ class Email_Post_Changes {
 	}
 
 	function wp_mail_from_once( $email ) {
-		return get_the_author_meta( 'email', $this->right_post->post_author );
 		remove_action( 'wp_mail_from', array( &$this, 'wp_mail_from_once' ) );
+		return get_the_author_meta( 'email', $this->right_post->post_author );
 	}
 
 	function wp_mail_from_name_once( $name ) {
