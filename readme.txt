@@ -9,7 +9,7 @@ Whenever a change to a post or page is made, those changes are emailed to the bl
 
 == Description ==
 
-Each time a change is made to a post or page, those changes are emaild to the blog's admin.
+Each time a change is made to a post or page, those changes are emailed to the blog's admin.
 
 The changes are emailed as a unified diff.  If the email client supports HTML emails, the diff
 will be colorized.
