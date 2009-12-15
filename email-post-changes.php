@@ -39,8 +39,6 @@ class Email_Post_Changes {
 		if ( !$this->left_post || !$this->right_post )
 			return;
 
-		$title = get_the_title( $this->right_post->ID );
-
 		$html_diffs = array();
 		$text_diffs = array();
 		$identical = true;
@@ -106,7 +104,7 @@ class Email_Post_Changes {
 		$html_diff = str_replace( '<ins>', '<ins style="text-decoration: none; background-color: #9f9">', $html_diff );
 
 		$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-		$title = wp_specialchars_decode( $title, ENT_QUOTES );
+		$title = wp_specialchars_decode( get_the_title( $this->right_post->ID ), ENT_QUOTES );
 
 		wp_mail(
 			get_option( 'admin_email' ),
