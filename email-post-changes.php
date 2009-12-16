@@ -273,7 +273,7 @@ class Email_Post_Changes {
 	function emails_setting() {
 		$options = $this->get_options();
 ?>
-		<textarea rows="4" cols="25" style="width: 25em;" name="email_post_changes[emails]"><?php echo esc_html( join( "\n", $options['emails'] ) ); ?></textarea>
+		<textarea rows="4" cols="40" style="width: 40em;" name="email_post_changes[emails]"><?php echo esc_html( join( "\n", $options['emails'] ) ); ?></textarea>
 		<p class="description"><?php _e( 'Send emails to these addresses.  One per line.' ); ?></p>
 		<p class="description"><?php printf(
 			__( "If blank, send emails to this site&#8217;s <a href='%s'>admin email address</a>." ),
