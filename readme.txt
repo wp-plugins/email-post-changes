@@ -14,9 +14,12 @@ Each time a change is made to a post or page, those changes are emailed to the e
 The changes are emailed as a unified diff.  If the email client supports HTML emails, the diff
 will be colorized.
 
-== Configuration ==
+== Installation ==
 
-Go to Settings -> Email Post Changes to set up what email addresses to use and for what post types you
+After uploading and activating the plugin, go to Settings -> Email Post Changes
+to set up the plugin.
+
+You can change what email addresses to use and for what post types you
 want change notifications.
 
 == Changelog ==
@@ -25,7 +28,7 @@ want change notifications.
 * Fix a Fatal PHP Error.
 * Configuration settings: email addresses, post types.
 
-== Upgrade Notic ==
+== Upgrade Notice ==
 
 = 0.3 =
 Bug fixes.  Configuration settings.
