@@ -41,6 +41,20 @@ class Email_Post_Changes {
 		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 	}
 
+	function get_post_types() {
+		$post_types = get_post_types();
+		if ( false !== $pos = array_search( 'revision', $post_types ) )
+			unset( $post_types[$pos] );
+		return $post_types;
+	}
+
+	function get_options( $just_defaults = false ) {
+		if ( $just_defaults )
+			return $this->defaults;
+
+		return get_option( 'email_post_changes', $this->defaults );
+	}
+
 	// The meat of the plugin
 	function wp_insert_post( $post_id, $post ) {
 		$options = $this->get_options();
@@ -174,7 +188,7 @@ class Email_Post_Changes {
 		);
 	}
 
-	/* Email hooks */
+	/* Email hook */
 	function phpmailer_init_once( &$phpmailer ) {
 		remove_action( 'phpmailer_init', array( &$this, 'phpmailer_init_once' ) );
 		$phpmailer->AltBody = $this->text_diff;
@@ -192,9 +206,16 @@ class Email_Post_Changes {
 	}
 
 	/* Admin */
-	function plugin_action_links( $links ) {
-		array_unshift( $links, '<a href="options-general.php?page=' . self::ADMIN_PAGE . '">' . __( 'Settings' ) . "</a>" );
-		return $links;
+	function admin_menu() {
+		register_setting( self::OPTION_GROUP, self::OPTION, array( &$this, 'validate_options' ) );
+
+		add_settings_section( self::ADMIN_PAGE, __( 'Email Post Changes' ), array( &$this, 'settings_section' ), self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_emails', __( 'Email Addresses' ), array( &$this, 'emails_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( &$this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+
+		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( &$this, 'admin_page' ) );
+
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'plugin_action_links' ) );
 	}
 
 	function validate_options( $options ) {
@@ -223,18 +244,6 @@ class Email_Post_Changes {
 		return $return;
 	}
 
-	function admin_menu() {
-		register_setting( self::OPTION_GROUP, self::OPTION, array( &$this, 'validate_options' ) );
-
-		add_settings_section( self::ADMIN_PAGE, __( 'Email Post Changes' ), array( &$this, 'settings_section' ), self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_emails', __( 'Email Addresses' ), array( &$this, 'emails_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( &$this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-
-		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( &$this, 'admin_page' ) );
-
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'plugin_action_links' ) );
-	}
-
 	function admin_page() {
 		$options = $this->get_options();
 ?>
@@ -259,7 +268,7 @@ class Email_Post_Changes {
 <?php
 	}
 
-	function settings_section() {}
+	function settings_section() {} // stub
 
 	function emails_setting() {
 		$options = $this->get_options();
@@ -289,18 +298,9 @@ class Email_Post_Changes {
 <?php
 	}
 
-	function get_post_types() {
-		$post_types = get_post_types();
-		if ( false !== $pos = array_search( 'revision', $post_types ) )
-			unset( $post_types[$pos] );
-		return $post_types;
-	}
-
-	function get_options( $just_defaults = false ) {
-		if ( $just_defaults )
-			return $this->defaults;
-
-		return get_option( 'email_post_changes', $this->defaults );
+	function plugin_action_links( $links ) {
+		array_unshift( $links, '<a href="options-general.php?page=' . self::ADMIN_PAGE . '">' . __( 'Settings' ) . "</a>" );
+		return $links;
 	}
 }
 
