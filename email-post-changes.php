@@ -192,6 +192,11 @@ class Email_Post_Changes {
 	}
 
 	/* Admin */
+	function plugin_action_links( $links ) {
+		array_unshift( $links, '<a href="options-general.php?page=' . self::ADMIN_PAGE . '">' . __( 'Settings' ) . "</a>" );
+		return $links;
+	}
+
 	function validate_options( $options ) {
 		if ( !$options || !is_array( $options ) )
 			return $this->defaults;
@@ -226,6 +231,8 @@ class Email_Post_Changes {
 		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( &$this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
 		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( &$this, 'admin_page' ) );
+
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'plugin_action_links' ) );
 	}
 
 	function admin_page() {
