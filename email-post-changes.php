@@ -39,8 +39,6 @@ class Email_Post_Changes {
 		if ( !$this->left_post || !$this->right_post )
 			return;
 
-		require_once( dirname( __FILE__ ) . '/unified.php' );
-
 		$html_diffs = array();
 		$text_diffs = array();
 		$identical = true;
@@ -57,6 +55,8 @@ class Email_Post_Changes {
 
 			$left_lines  = split( "\n", $left );
 			$right_lines = split( "\n", $right );
+
+			require_once( dirname( __FILE__ ) . '/unified.php' );
 
 			$text_diff = new Text_Diff( $left_lines, $right_lines );
 			$renderer  = new Text_Diff_Renderer_unified();
