@@ -2,7 +2,7 @@
 Contributors: mdawaffe
 Tags: email, diff, post, page, change
 Requires at least: 2.9
-Tested up to: 2.9
+Tested up to: 2.9.1
 Stable tag: 0.3
 
 Emails you Whenever a change to a post or page is made.
@@ -23,6 +23,10 @@ You can change what email addresses to use and for what post types you
 want change notifications.
 
 == Changelog ==
+
+= 0.4 =
+* Fix some PHP Warnings.
+* Fix bug when emails array is already an array.
 
 = 0.3 =
 * Fix a Fatal PHP Error.
