@@ -22,11 +22,14 @@ to set up the plugin.
 You can change what email addresses to use and for what post types you
 want change notifications.
 
+This plugin requires PHP 5.2 or greater.
+
 == Changelog ==
 
 = 0.4 =
 * Fix some PHP Warnings.
 * Fix bug when emails array is already an array.
+* Remove code that requires PHP 5.3.
 
 = 0.3 =
 * Fix a Fatal PHP Error.

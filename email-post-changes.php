@@ -104,7 +104,7 @@ class Email_Post_Changes {
 		// Grab the meta data
 		$the_author = get_the_author_meta( 'display_name', $this->right_post->post_author );
 		$the_title = get_the_title( $this->right_post->ID );
-		$right_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $this->right_post->post_modified_gmt, new DateTimeZone( 'UTC' ) );
+		$right_date = new DateTime( $this->right_post->post_modified_gmt, new DateTimeZone( 'UTC' ) );
 		$the_date = $right_date->format( 'j F, Y \a\t G:i \U\T\C' );
 		$the_permalink = clean_url( get_permalink( $this->right_post->ID ) );
 		$the_edit_link = clean_url( get_edit_post_link( $this->right_post->ID ) );
