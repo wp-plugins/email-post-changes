@@ -3,7 +3,7 @@ Contributors: mdawaffe, automattic
 Tags: email, diff, post, page, change
 Requires at least: 2.9
 Tested up to: 2.9.1
-Stable tag: 0.4
+Stable tag: 0.5
 
 Emails you Whenever a change to a post or page is made.
 
@@ -47,6 +47,9 @@ This plugin requires PHP 5.2 or greater.
 
 
 == Upgrade Notice ==
+
+= 0.5 =
+Bug fixes.
 
 = 0.4 =
 Reduces PHP dependency to PHP version 5.2.  Bug fixes.
