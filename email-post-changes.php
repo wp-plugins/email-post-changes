@@ -102,9 +102,9 @@ class Email_Post_Changes {
 			return;
 
 		// Grab the meta data
-		$the_author = get_the_author_meta( 'display_name', $this->right_post->post_author );
-		$the_title = get_the_title( $this->right_post->ID );
-		$right_date = new DateTime( $this->right_post->post_modified_gmt, new DateTimeZone( 'UTC' ) );
+		$the_author = get_the_author_meta( 'display_name', $this->left_post->post_author ); // The revision
+		$the_title = get_the_title( $this->right_post->ID ); // New title (may be same as old title)
+		$right_date = new DateTime( $this->right_post->post_modified_gmt, new DateTimeZone( 'UTC' ) ); // Modified time
 		$the_date = $right_date->format( 'j F, Y \a\t G:i \U\T\C' );
 		$the_permalink = clean_url( get_permalink( $this->right_post->ID ) );
 		$the_edit_link = clean_url( get_edit_post_link( $this->right_post->ID ) );
@@ -129,7 +129,7 @@ class Email_Post_Changes {
 
 		$html_diff_head .= "<table style='width: 100%; border-collapse: collapse; border: none;'><tr>\n";
 		$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $left_title ) . ' @ ' . esc_html( $this->left_post->post_date_gmt ) . "</td>\n";
-		$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $right_title ) . ' @ ' . esc_html( $this->left_post->post_modified_gmt ) . "</td>\n";
+		$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $right_title ) . ' @ ' . esc_html( $this->right_post->post_modified_gmt ) . "</td>\n";
 		$html_diff_head .= "</tr></table>\n\n";
 
 		$html_diff = '';
