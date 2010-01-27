@@ -4,7 +4,7 @@
 Plugin Name: Email Post Changes
 Description: Whenever a change to a post or page is made, those changes are emailed to the blog's admin.
 Plugin URI: http://wordpress.org/extend/plugins/email-post-changes/
-Version: 0.4
+Version: 0.5
 Author: Michael D Adams
 Author URI: http://blogwaffe.com/
 */
@@ -176,8 +176,9 @@ class Email_Post_Changes {
 
 
 		// Send email
-		$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-		$title = wp_specialchars_decode( $the_title, ENT_QUOTES );
+		$charset = apply_filters( 'wp_mail_charset', get_option( 'blog_charset' ) );
+		$blogname = html_entity_decode( get_option( 'blogname' ), ENT_QUOTES, $charset );
+		$title = html_entity_decode( $the_title, ENT_QUOTES, $charset );
 
 		add_action( 'phpmailer_init', array( &$this, 'phpmailer_init_once' ) );
 

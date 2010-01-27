@@ -31,6 +31,9 @@ This plugin requires PHP 5.2 or greater.
 
 == Changelog ==
 
+= 0.5 =
+* Fix htmlencoding in email subjects.
+
 = 0.4 =
 * Fix some PHP Warnings.
 * Fix bug when emails array is already an array.
