@@ -1,9 +1,9 @@
 === Email Post Changes ===
-Contributors: mdawaffe, automattic
+Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
 Requires at least: 2.9
-Tested up to: 2.9.1
-Stable tag: 0.5
+Tested up to: 3.0
+Stable tag: 0.6
 
 Emails you Whenever a change to a post or page is made.
 
@@ -30,6 +30,12 @@ This plugin requires PHP 5.2 or greater.
 
 
 == Changelog ==
+
+= 0.6 =
+* Pull class out to own file to make it easy to write plugins that extend this functionality.
+* Switch to TO instead of BCC.
+* Better default options handling.
+* Changes to drafts are now ignored by default. New checkbox on settings page to re-enable.
 
 = 0.5 =
 * Fix htmlencoding in email subjects.
