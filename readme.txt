@@ -54,6 +54,9 @@ This plugin requires PHP 5.2 or greater.
 
 == Upgrade Notice ==
 
+= 0.6 =
+Ignore changes to drafts by default.  Send emails with TO instead of BCC.
+
 = 0.5 =
 Bug fixes.
 
