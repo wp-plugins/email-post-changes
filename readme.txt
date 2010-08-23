@@ -26,10 +26,14 @@ to set up the plugin.
 You can change what email addresses to use and for what post types you
 want change notifications.
 
-This plugin requires PHP 5.2 or greater.
+This plugin requires PHP 5 or greater.
 
 
 == Changelog ==
+
+= 0.7 =
+* PHP Warning.
+* Remove code that requires PHP 5.2
 
 = 0.6 =
 * Pull class out to own file to make it easy to write plugins that extend this functionality.

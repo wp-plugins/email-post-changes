@@ -20,6 +20,7 @@ class Email_Post_Changes {
 
 		$class = __CLASS__;
 		$instance = new $class;
+		return $instance;
 	}
 
 	function __construct() {
@@ -101,8 +102,7 @@ class Email_Post_Changes {
 		// Grab the meta data
 		$the_author = get_the_author_meta( 'display_name', $this->left_post->post_author ); // The revision
 		$the_title = get_the_title( $this->right_post->ID ); // New title (may be same as old title)
-		$right_date = new DateTime( $this->right_post->post_modified_gmt, new DateTimeZone( 'UTC' ) ); // Modified time
-		$the_date = $right_date->format( 'j F, Y \a\t G:i \U\T\C' );
+		$the_date = gmdate( 'j F, Y \a\t G:i \U\T\C', strtotime( $this->right_post->post_modified_gmt . '+0000' ) ); // Modified time
 		$the_permalink = clean_url( get_permalink( $this->right_post->ID ) );
 		$the_edit_link = clean_url( get_edit_post_link( $this->right_post->ID ) );
 
