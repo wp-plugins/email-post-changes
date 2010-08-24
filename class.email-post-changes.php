@@ -203,6 +203,19 @@ class Email_Post_Changes {
 		);
 	}
 
+	function get_post_type_label( $post_type ) {
+		// 2.9
+		if ( !function_exists( 'get_post_type_object' ) )
+			return ucwords( str_replace( '_', ' ', $post_type ) );
+
+		// 3.0
+		$post_type_object = get_post_type_object( $post_type );
+		if ( empty( $post_type_object->label ) )
+			return ucwords( str_replace( '_', ' ', $post_type ) );
+
+		return $post_type_object->label;
+	}
+
 	/* Admin */
 	function admin_menu() {
 		register_setting( self::OPTION_GROUP, self::OPTION, array( &$this, 'validate_options' ) );
@@ -213,8 +226,6 @@ class Email_Post_Changes {
 		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( &$this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
 		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( &$this, 'admin_page' ) );
-
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'plugin_action_links' ) );
 	}
 
 	function validate_options( $options ) {
@@ -290,9 +301,11 @@ class Email_Post_Changes {
 ?>
 
 		<ul>
-<?php		foreach ( $this->get_post_types() as $post_type ) : ?>
-
-			<li><label><input type="checkbox" name="email_post_changes[post_types][]" value="<?php echo esc_attr( $post_type ); ?>"<?php checked( in_array( $post_type, $options['post_types'] ) ); ?> /> <?php echo esc_html( ucfirst( $post_type ) ); ?></label></li>
+<?php
+		foreach ( $this->get_post_types() as $post_type ) :
+			$label = $this->get_post_type_label( $post_type );
+?>
+			<li><label><input type="checkbox" name="email_post_changes[post_types][]" value="<?php echo esc_attr( $post_type ); ?>"<?php checked( in_array( $post_type, $options['post_types'] ) ); ?> /> <?php echo esc_html( $label ); ?></label></li>
 <?php		endforeach; ?>
 
 		</ul>
@@ -307,10 +320,5 @@ class Email_Post_Changes {
 
 		<p><label><input type="checkbox" name="email_post_changes[drafts]" value="1"<?php checked( $options['drafts'], 1 ); ?> /> <?php _e( 'Email changes to drafts, not just published items.' ); ?></label></p>
 <?php
-	}
-
-	function plugin_action_links( $links ) {
-		array_unshift( $links, '<a href="options-general.php?page=' . self::ADMIN_PAGE . '">' . __( 'Settings' ) . "</a>" );
-		return $links;
 	}
 }

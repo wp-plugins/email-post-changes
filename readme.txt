@@ -32,8 +32,10 @@ This plugin requires PHP 5 or greater.
 == Changelog ==
 
 = 0.7 =
-* PHP Warning.
-* Remove code that requires PHP 5.2
+* Fix PHP Warning.
+* Remove code that requires PHP 5.2.
+* Fix settings link.
+* Better post_type labeling.
 
 = 0.6 =
 * Pull class out to own file to make it easy to write plugins that extend this functionality.
