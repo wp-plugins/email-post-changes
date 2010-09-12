@@ -2,34 +2,36 @@
 Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
 Requires at least: 2.9
-Tested up to: 3.0
-Stable tag: 0.7
+Tested up to: 3.0.1
+Stable tag: 0.8
 
 Emails you Whenever a change to a post or page is made.
 
 == Description ==
 
-Each time a change is made to a post or page, those changes are emailed to the email addresses you specify.
+Each time a change is made to a post or page, those changes are emailed to the users and email addresses you specify.
 
 Optionally, you can set what types of changes to email (post changes, page changes, attachment changes, or changes
 to any other 'post type' defined by any other plugin).
 
-The changes are emailed as a unified diff.  If the email client supports HTML emails, the diff
-will be colorized.
+The changes are emailed as a unified diff.  If the email client supports HTML emails, the diff will be colorized.
 
 
 == Installation ==
 
-After uploading and activating the plugin, go to Settings -> Email Post Changes
-to set up the plugin.
+After uploading and activating the plugin, go to Settings -> Email Post Changes to set up the plugin.
 
-You can change what email addresses to use and for what post types you
-want change notifications.
+You can change what email addresses to use and for what post types you want change notifications.
 
 This plugin requires PHP 5 or greater.
 
 
 == Changelog ==
+
+= 0.8 =
+* Add user selection to the Settings page.
+* Change the HTML diff so that it only includes 2 leading and trailing lines.
+* Fix bug where an invalid email address would keep throwing an error when loading the Settings page.
 
 = 0.7 =
 * Fix PHP Warning.
