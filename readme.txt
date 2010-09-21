@@ -3,9 +3,9 @@ Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
 Requires at least: 2.9
 Tested up to: 3.0.1
-Stable tag: 0.8
+Stable tag: 0.9
 
-Emails you Whenever a change to a post or page is made.
+Emails you whenever a change to a post or page is made.
 
 == Description ==
 
@@ -27,6 +27,9 @@ This plugin requires PHP 5 or greater.
 
 
 == Changelog ==
+
+= 0.9 =
+* Allow emails field to be empty if there is at least one user selected.
 
 = 0.8 =
 * Add user selection to the Settings page.

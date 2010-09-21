@@ -273,9 +273,9 @@ class Email_Post_Changes {
 
 		if ( empty( $options['emails'] ) ) {
 			if ( count( $return['users'] ) )
-				$return['emails'] = $this->defaults['emails'];
+				$return['emails'] = array();
 			else
-				$return['emails'] = array( get_option( 'admin_email' ) );
+				$return['emails'] = $this->defaults['emails'];
 		} else {
 			if ( is_string( $options['emails'] ) )
 				$_emails = preg_split( '(\n|\r)', $options['emails'], -1, PREG_SPLIT_NO_EMPTY );
@@ -286,9 +286,9 @@ class Email_Post_Changes {
 			if ( $emails )
 				$return['emails'] = $emails;
 			elseif ( count( $return['users'] ) )
-				$return['emails'] = $this->defaults['emails'];
+				$return['emails'] = array();
 			else
-				$return['emails'] = array( get_option( 'admin_email' ) );
+				$return['emails'] = $this->defaults['emails'];
 		}
 
 		if ( empty( $options['post_types'] ) || !is_array( $options ) ) {
