@@ -344,9 +344,10 @@ class Email_Post_Changes {
 			<ul>
 <?php		$users = get_users_of_blog();
 		usort( $users, array( $this, 'sort_users_by_display_name' ) );
-		
+
 		foreach ( $users as $user ) : ?>
-				<li><label><input type="checkbox" name="email_post_changes[users][]" value="<?php echo esc_attr( $user->user_id ); ?>"<?php checked( in_array( $user->user_id, $options['users'] ) ); ?> /> <?php echo esc_html( $user->display_name ); ?> ( <?php echo esc_html( $user->user_login ); ?> - <?php echo esc_html( $user->user_email ); ?> )</label></li>
+				<li><label><input type="checkbox" name="email_post_changes[users][]" value="<?php echo (int) $user->ID; ?>"<?php checked( in_array( $user->ID, $options['users'] ) ); ?> /> <?php echo esc_html( $user->display_name ); ?> ( <?php echo esc_html( $user->user_login ); ?> - <?php echo esc_html( $user->user_email ); ?> )</label></li>
+
 <?php		endforeach; ?>
 			</ul>
 		</div>
