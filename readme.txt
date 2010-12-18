@@ -2,8 +2,8 @@
 Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
 Requires at least: 2.9
-Tested up to: 3.0.1
-Stable tag: 0.9
+Tested up to: 3.1
+Stable tag: 1.0
 
 Emails you whenever a change to a post or page is made.
 
@@ -27,6 +27,9 @@ This plugin requires PHP 5 or greater.
 
 
 == Changelog ==
+
+= 1.0 =
+* Fix bug preventing changes to 'Users to Email' checkboxes
 
 = 0.9 =
 * Allow emails field to be empty if there is at least one user selected.
@@ -64,6 +67,9 @@ This plugin requires PHP 5 or greater.
 
 
 == Upgrade Notice ==
+
+= 1.0 =
+Bug fixes.
 
 = 0.6 =
 Ignore changes to drafts by default.  Send emails with TO instead of BCC.
