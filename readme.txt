@@ -1,9 +1,9 @@
 === Email Post Changes ===
 Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
-Requires at least: 2.9
-Tested up to: 3.1
-Stable tag: 1.0
+Requires at least: 3.1
+Tested up to: 3.2
+Stable tag: 1.1
 
 Emails you whenever a change to a post or page is made.
 
