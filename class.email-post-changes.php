@@ -202,7 +202,7 @@ class Email_Post_Changes {
 		remove_action( 'phpmailer_init', array( &$this, 'phpmailer_init_once' ) );
 		$phpmailer->AltBody = $this->text_diff;
 
-		$phpmailer->to = array(); // Hack
+		$phpmailer->ClearAddresses(); // hack
 
 		$options = $this->get_options();
 
