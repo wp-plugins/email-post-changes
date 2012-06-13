@@ -3,7 +3,7 @@ Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
 Requires at least: 3.1
 Tested up to: 3.2
-Stable tag: 1.1
+Stable tag: 1.2
 
 Emails you whenever a change to a post or page is made.
 
