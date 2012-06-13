@@ -12,7 +12,7 @@ class Email_Post_Changes {
 	const OPTION_GROUP = 'email_post_changes';
 	const OPTION = 'email_post_changes';
 
-	function &init() {
+	function init() {
 		static $instance = null;
 
 		if ( $instance )
@@ -35,9 +35,9 @@ class Email_Post_Changes {
 		$options = $this->get_options();
 
 		if ( $options['enable'] )
-			add_action( 'wp_insert_post', array( &$this, 'wp_insert_post' ), 10, 2 );
+			add_action( 'wp_insert_post', array( $this, 'wp_insert_post' ), 10, 2 );
 		if ( current_user_can( 'manage_options' ) )
-			add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 	}
 
 	function get_post_types() {
@@ -191,7 +191,7 @@ class Email_Post_Changes {
 		$blogname = html_entity_decode( get_option( 'blogname' ), ENT_QUOTES, $charset );
 		$title = html_entity_decode( $the_title, ENT_QUOTES, $charset );
 
-		add_action( 'phpmailer_init', array( &$this, 'phpmailer_init_once' ) );
+		add_action( 'phpmailer_init', array( $this, 'phpmailer_init_once' ) );
 
 		wp_mail(
 			null, // see hack in ::phpmailer_init_once()
@@ -206,10 +206,10 @@ class Email_Post_Changes {
 	}
 
 	/* Email hook */
-	function phpmailer_init_once( &$phpmailer ) {
+	function phpmailer_init_once( $phpmailer ) {
 		global $blog_id;
 
-		remove_action( 'phpmailer_init', array( &$this, 'phpmailer_init_once' ) );
+		remove_action( 'phpmailer_init', array( $this, 'phpmailer_init_once' ) );
 		$phpmailer->AltBody = $this->text_diff;
 
 		$phpmailer->ClearAddresses(); // hack
@@ -255,16 +255,16 @@ class Email_Post_Changes {
 
 	/* Admin */
 	function admin_menu() {
-		register_setting( self::OPTION_GROUP, self::OPTION, array( &$this, 'validate_options' ) );
+		register_setting( self::OPTION_GROUP, self::OPTION, array( $this, 'validate_options' ) );
 
-		add_settings_section( self::ADMIN_PAGE, __( 'Email Post Changes' ), array( &$this, 'settings_section' ), self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_enable', __( 'Enable' ), array( &$this, 'enable_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users to Email' ), array( &$this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_emails', __( 'Additional Email Addresses' ), array( &$this, 'emails_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( &$this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
-		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( &$this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_section( self::ADMIN_PAGE, __( 'Email Post Changes' ), array( $this, 'settings_section' ), self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_enable', __( 'Enable' ), array( $this, 'enable_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_users', __( 'Users to Email' ), array( $this, 'users_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_emails', __( 'Additional Email Addresses' ), array( $this, 'emails_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( $this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
+		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( $this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
-		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( &$this, 'admin_page' ) );
+		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
 	}
 
 	function validate_options( $options ) {
