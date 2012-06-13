@@ -293,14 +293,28 @@ class Email_Post_Changes {
 				$_emails = preg_split( '(\n|\r)', $options['emails'], -1, PREG_SPLIT_NO_EMPTY );
 			$_emails = array_unique( (array) $_emails );
 			$emails = array_filter( $_emails, 'is_email' );
-			if ( $diff = array_diff( $_emails, $emails ) )
-				$return['invalid_emails'] = $diff;
+
+			$invalid_emails = array_diff( $_emails, $emails );
+			if ( $invalid_emails )
+				$return['invalid_emails'] = $invalid_emails;
+
 			if ( $emails )
 				$return['emails'] = $emails;
 			elseif ( count( $return['users'] ) )
 				$return['emails'] = array();
 			else
 				$return['emails'] = $this->defaults['emails'];
+
+			// Don't store a huge list of invalid emails addresses in the option
+			if ( count( $return['invalid_emails'] ) > 200 ) {
+				$return['invalid_emails'] = array_slice( $return['invalid_emails'], 0, 200 );
+				$return['invalid_emails'][] = __( 'and many more not listed here' );
+			}
+
+			// Cap to at max 200 email addresses
+			if ( count( $return['emails'] ) > 200 ) {
+				$return['emails'] = array_slice( $return['emails'], 0, 200 );
+			}
 		}
 
 		if ( empty( $options['post_types'] ) || !is_array( $options ) ) {
@@ -323,7 +337,7 @@ class Email_Post_Changes {
 
 <div class="wrap">
 	<h2><?php _e( 'Email Post Changes' ); ?></h2>
-<?php	if ( !empty( $options['invalid_emails'] ) && $_GET['updated'] ) : ?>
+<?php	if ( !empty( $options['invalid_emails'] ) && $_GET['settings-updated'] ) : ?>
 	<div class="error">
 		<p><?php printf( _n( 'Invalid Email: %s', 'Invalid Emails: %s', count( $options['invalid_emails'] ) ), '<kbd>' . join( '</kbd>, <kbd>', array_map( 'esc_html', $options['invalid_emails'] ) ) ); ?></p>
 	</div>
