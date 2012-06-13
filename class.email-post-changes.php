@@ -41,10 +41,15 @@ class Email_Post_Changes {
 	}
 
 	function get_post_types() {
-		$post_types = get_post_types();
-		if ( false !== $pos = array_search( 'revision', $post_types ) )
-			unset( $post_types[$pos] );
-		return $post_types;
+		$post_types = get_post_types( array( 'public' => true ) );
+		$_post_types = array();
+
+		foreach ( $post_types as $post_type ) {
+			if ( post_type_supports( $post_type, 'revisions' ) )
+				$_post_types[] = $post_type;
+		}
+
+		return $_post_types;
 	}
 
 	function get_options( $just_defaults = false ) {
