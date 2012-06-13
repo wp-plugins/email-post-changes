@@ -368,7 +368,7 @@ class Email_Post_Changes {
 ?>
 		<div style="overflow: auto; max-height: 300px;">
 			<ul>
-<?php		$users = get_users_of_blog();
+<?php		$users = get_users();
 		usort( $users, array( $this, 'sort_users_by_display_name' ) );
 
 		foreach ( $users as $user ) : ?>
