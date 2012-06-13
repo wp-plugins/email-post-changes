@@ -30,8 +30,7 @@ class Email_Post_Changes {
 			'emails'     => array( get_option( 'admin_email' ) ),
 			'post_types' => array( 'post', 'page' ),
 			'drafts'     => 0,
-			)
-		);
+		) );
 
 		$options = $this->get_options();
 
@@ -103,8 +102,11 @@ class Email_Post_Changes {
 			$identical = false;
 		}
 
-		if ( $identical )
+		if ( $identical ) {
+			$this->left_post = null;
+			$this->right_post = null;
 			return;
+		}
 
 		// Grab the meta data
 		$the_author = get_the_author_meta( 'display_name', $this->left_post->post_author ); // The revision
@@ -191,6 +193,9 @@ class Email_Post_Changes {
 			sprintf( __( '[%s] %s changed: %s' ), $blogname, $post_type, $title ),
 			$html_diff
 		);
+
+		$this->left_post = null;
+		$this->right_post = null;
 
 		do_action( 'email_post_changes_email_sent' );
 	}
@@ -392,8 +397,8 @@ class Email_Post_Changes {
 
 		$left_string  = normalize_whitespace( $left_string );
 		$right_string = normalize_whitespace( $right_string );
-		$left_lines  = split( "\n", $left_string );
-		$right_lines = split( "\n", $right_string );
+		$left_lines  = explode( "\n", $left_string );
+		$right_lines = explode( "\n", $right_string );
 
 		$text_diff = new Text_Diff( $left_lines, $right_lines );
 		$renderer  = new Email_Post_Changes_Diff();

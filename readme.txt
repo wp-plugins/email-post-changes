@@ -28,6 +28,9 @@ This plugin requires PHP 5 or greater.
 
 == Changelog ==
 
+= 1.2 =
+* Fix bug when bulk editing posts.
+
 = 1.0 =
 * Fix bug preventing changes to 'Users to Email' checkboxes
 
