@@ -232,6 +232,8 @@ class Email_Post_Changes {
 		if ( !count( $emails ) )
 			$emails[] = get_option( 'admin_email');
 
+		$emails = apply_filters( 'email_post_changes_emails', $emails, $this->left_post->ID, $this->right_post->ID );
+
 		foreach ( $emails as $email )
 			$phpmailer->AddAddress( $email );
 
