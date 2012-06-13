@@ -37,7 +37,7 @@ class Email_Post_Changes {
 		if ( $options['enable'] )
 			add_action( 'wp_insert_post', array( $this, 'wp_insert_post' ), 10, 2 );
 		if ( current_user_can( 'manage_options' ) )
-			add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+			add_action( 'admin_menu', array( $this, 'admin_menu' ), 115 );
 	}
 
 	function get_post_types() {
