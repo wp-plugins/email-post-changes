@@ -35,7 +35,7 @@ class Email_Post_Changes {
 		$options = $this->get_options();
 
 		if ( $options['enable'] )
-			add_action( 'wp_insert_post', array( $this, 'wp_insert_post' ), 10, 2 );
+			add_action( 'post_updated', array( $this, 'post_updated' ), 10, 3 );
 		if ( current_user_can( 'manage_options' ) )
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 115 );
 	}
@@ -62,20 +62,30 @@ class Email_Post_Changes {
 	}
 
 	// The meat of the plugin
-	function wp_insert_post( $post_id, $post ) {
+	function post_updated( $post_id, $post_after, $post_before ) {
 		$options = $this->get_options();
-
-		if ( ! $options['drafts'] && 'draft' == $post->post_status )
+		// If we're purely saving a draft, and don't have the draft option enabled, skip. If we're transitioning one way or the other, send a notification.
+		if ( 0 == $options['drafts'] && 'draft' == $post_before->post_status && 'draft' == $post_after->post_status )
+			return;
+                	
+		if ( wp_is_post_autosave( $post_after ) )
 			return;
 
-		if ( 'revision' == $post->post_type ) { // Revision is saved first
-			if ( wp_is_post_autosave( $post ) )
-				return;
-			$this->left_post = $post;
-		} elseif ( !empty( $this->left_post ) && $this->left_post->post_parent == $post->ID ) { // Then new post
-			if ( !in_array( $post->post_type, $options['post_types'] ) )
-				return;
-			$this->right_post = $post;
+		// Our inputs are just the raw post data from before and after, so the wp_is_post_autosave() check, 
+		// which looks for {$post->post_parent}-autosave in the post_name, may not work. Check this too just to be safe.
+		if ( 'auto-draft' == $post_before->post_status || 'auto-draft' == $post_after->post_status )
+			return;
+
+		if ( !in_array( $post_before->post_type, $options['post_types'] ) )
+			return;
+
+		$this->left_post = $post_before;
+		$this->right_post = $post_after;
+
+		// If this is a new post, set an empty title for $this->left_post so that it appears in the diff.
+                $child_posts = wp_get_post_revisions( $post_id, array( 'numberposts' => 1 ) );
+                if ( count( $child_posts ) == 0 ) {
+			$this->left_post->post_title = '';
 		}
 
 		if ( !$this->left_post || !$this->right_post )

@@ -2,8 +2,8 @@
 Contributors: mdawaffe, automattic, viper007bond, nickmomrik
 Tags: email, diff, post, page, change
 Requires at least: 3.2
-Tested up to: 3.4
-Stable tag: 1.2
+Tested up to: 3.6
+Stable tag: 1.3
 
 Emails you whenever a change to a post or page is made.
 
@@ -27,6 +27,9 @@ This plugin requires PHP 5 or greater.
 
 
 == Changelog ==
+
+= 1.3 =
+* Update for WordPress 3.6 compatibility.
 
 = 1.2 =
 * Fix bug when bulk editing posts.
