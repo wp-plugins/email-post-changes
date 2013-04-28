@@ -124,7 +124,7 @@ class Email_Post_Changes {
 		}
 
 		// Grab the meta data
-		$the_author = get_the_author_meta( 'display_name', $this->left_post->post_author ); // The revision
+		$the_author = get_the_author_meta( 'display_name', get_current_user_id() ); // The revision
 		$the_title = get_the_title( $this->right_post->ID ); // New title (may be same as old title)
 		$the_date = gmdate( 'j F, Y \a\t G:i \U\T\C', strtotime( $this->right_post->post_modified_gmt . '+0000' ) ); // Modified time
 		$the_permalink = clean_url( get_permalink( $this->right_post->ID ) );
