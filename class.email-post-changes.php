@@ -68,12 +68,7 @@ class Email_Post_Changes {
 		if ( 0 == $options['drafts'] && 'draft' == $post_before->post_status && 'draft' == $post_after->post_status )
 			return;
                 	
-		if ( wp_is_post_autosave( $post_after ) )
-			return;
-
-		// Our inputs are just the raw post data from before and after, so the wp_is_post_autosave() check, 
-		// which looks for {$post->post_parent}-autosave in the post_name, may not work. Check this too just to be safe.
-		if ( 'auto-draft' == $post_before->post_status || 'auto-draft' == $post_after->post_status )
+		if ( isset( $_POST['autosave'] ) )
 			return;
 
 		if ( !in_array( $post_before->post_type, $options['post_types'] ) )
