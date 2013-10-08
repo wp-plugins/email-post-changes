@@ -12,7 +12,7 @@ class Email_Post_Changes {
 	const OPTION_GROUP = 'email_post_changes';
 	const OPTION = 'email_post_changes';
 
-	function init() {
+	static function init() {
 		static $instance = null;
 
 		if ( $instance )
@@ -100,8 +100,8 @@ class Email_Post_Changes {
 			$left  = normalize_whitespace( $left );
 			$right = normalize_whitespace( $right );
 
-			$left_lines  = split( "\n", $left );
-			$right_lines = split( "\n", $right );
+			$left_lines  = explode( "\n", $left );
+			$right_lines = explode( "\n", $right );
 
 			require_once( dirname( __FILE__ ) . '/unified.php' );
 
@@ -294,9 +294,8 @@ class Email_Post_Changes {
 			else
 				$return['emails'] = $this->defaults['emails'];
 		} else {
-			if ( is_string( $options['emails'] ) )
-				$_emails = preg_split( '(\n|\r)', $options['emails'], -1, PREG_SPLIT_NO_EMPTY );
-			$_emails = array_unique( (array) $_emails );
+			$_emails = is_string( $options['emails'] ) ? preg_split( '(\n|\r)', $options['emails'], -1, PREG_SPLIT_NO_EMPTY ) : array();
+			$_emails = array_unique( $_emails );
 			$emails = array_filter( $_emails, 'is_email' );
 
 			$invalid_emails = array_diff( $_emails, $emails );
@@ -311,7 +310,7 @@ class Email_Post_Changes {
 				$return['emails'] = $this->defaults['emails'];
 
 			// Don't store a huge list of invalid emails addresses in the option
-			if ( count( $return['invalid_emails'] ) > 200 ) {
+			if ( isset ( $return['invalid_emails'] ) && count( $return['invalid_emails'] ) > 200 ) {
 				$return['invalid_emails'] = array_slice( $return['invalid_emails'], 0, 200 );
 				$return['invalid_emails'][] = __( 'and many more not listed here' );
 			}
