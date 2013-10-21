@@ -196,30 +196,7 @@ class Email_Post_Changes {
 		$blogname = html_entity_decode( get_option( 'blogname' ), ENT_QUOTES, $charset );
 		$title = html_entity_decode( $the_title, ENT_QUOTES, $charset );
 
-		add_action( 'phpmailer_init', array( $this, 'phpmailer_init_once' ) );
-
-		wp_mail(
-			null, // see hack in ::phpmailer_init_once()
-			sprintf( __( '[%s] %s changed: %s' ), $blogname, $post_type, $title ),
-			$html_diff
-		);
-
-		$this->left_post = null;
-		$this->right_post = null;
-
-		do_action( 'email_post_changes_email_sent' );
-	}
-
-	/* Email hook */
-	function phpmailer_init_once( $phpmailer ) {
-		global $blog_id;
-
-		remove_action( 'phpmailer_init', array( $this, 'phpmailer_init_once' ) );
-		$phpmailer->AltBody = $this->text_diff;
-
-		$phpmailer->ClearAddresses(); // hack
-
-		$options = $this->get_options();
+		add_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
 
 		$user_emails = array();
 		foreach( $options['users'] as $user_id ) {
@@ -233,14 +210,26 @@ class Email_Post_Changes {
 		}
 
 		$emails = array_unique( array_merge( $options['emails'], $user_emails ) );
-
 		if ( !count( $emails ) )
 			$emails[] = get_option( 'admin_email');
 
 		$emails = apply_filters( 'email_post_changes_emails', $emails, $this->left_post->ID, $this->right_post->ID );
 
-		foreach ( $emails as $email )
-			$phpmailer->AddAddress( $email );
+		foreach ( $emails as $email ) {
+			wp_mail(
+				$email,
+				sprintf( __( '[%s] %s changed: %s' ), $blogname, $post_type, $title ),
+				$html_diff
+			);
+		}
+
+		remove_action( 'phpmailer_init', array( &$this, 'phpmailer_init' ) );
+
+		do_action( 'email_post_changes_email_sent' );
+	}
+
+	function phpmailer_init( &$phpmailer ) {
+		$phpmailer->AltBody = $this->text_diff;
 
 		$phpmailer->AddReplyTo(
 			get_the_author_meta( 'email', $this->right_post->post_author ),
