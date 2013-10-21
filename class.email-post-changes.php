@@ -201,7 +201,7 @@ class Email_Post_Changes {
 		$user_emails = array();
 		foreach( $options['users'] as $user_id ) {
 			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-				if ( is_user_member_of_blog( $user_id, $blog_id ) )
+				if ( is_user_member_of_blog( $user_id, get_current_blog_id() ) )
 					$user_emails[] = get_user_option( 'user_email', $user_id );
 			} else {
 				if ( $user_email = get_user_option( 'user_email', $user_id ) )
