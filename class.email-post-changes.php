@@ -210,8 +210,8 @@ class Email_Post_Changes {
 		}
 
 		$emails = array_unique( array_merge( $options['emails'], $user_emails ) );
-		if ( !count( $emails ) )
-			$emails[] = get_option( 'admin_email');
+		if ( ! count( $emails ) && apply_filters( 'email_post_changes_admin_email_fallback', true ) )
+			$emails[] = get_option( 'admin_email' );
 
 		$emails = apply_filters( 'email_post_changes_emails', $emails, $this->left_post->ID, $this->right_post->ID );
 
