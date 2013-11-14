@@ -4,7 +4,7 @@
 Plugin Name: Email Post Changes
 Description: Whenever a change to a post or page is made, those changes are emailed to the users and email addresses you specify.
 Plugin URI: http://wordpress.org/extend/plugins/email-post-changes/
-Version: 1.6-beta
+Version: 1.7
 Author: Michael D Adams
 Author URI: http://blogwaffe.com/
 */

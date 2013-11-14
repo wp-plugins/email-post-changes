@@ -2,8 +2,8 @@
 Contributors: mdawaffe, automattic, viper007bond, nickmomrik, dllh, iandunn
 Tags: email, diff, post, page, change
 Requires at least: 3.2
-Tested up to: 3.6
-Stable tag: 1.6
+Tested up to: 3.7.1
+Stable tag: 1.7
 
 Emails you whenever a change to a post or page is made.
 
@@ -23,10 +23,13 @@ After uploading and activating the plugin, go to Settings -> Email Post Changes 
 
 You can change what email addresses to use and for what post types you want change notifications.
 
-This plugin requires PHP 5 or greater.
-
 
 == Changelog ==
+
+= 1.7 = 
+* Send e-mails to each recipient individually, so that the recipients won't see who else recieved the message.
+* Added the `email_post_changes_admin_email_fallback` filter.
+* Fixed a PHP notice about $blog_id being undefined.
 
 = 1.6 =
 * Fix a few php notices.
@@ -82,6 +85,9 @@ This plugin requires PHP 5 or greater.
 
 
 == Upgrade Notice ==
+
+= 1.7 =
+* Send e-mails to each recipient individually, so that the recipients won't see who else recieved the message.
 
 = 1.0 =
 Bug fixes.
