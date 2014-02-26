@@ -64,10 +64,15 @@ class Email_Post_Changes {
 	// The meat of the plugin
 	function post_updated( $post_id, $post_after, $post_before ) {
 		$options = $this->get_options();
-		// If we're purely saving a draft, and don't have the draft option enabled, skip. If we're transitioning one way or the other, send a notification.
-		if ( 0 == $options['drafts'] && 'draft' == $post_before->post_status && 'draft' == $post_after->post_status )
+
+		// Transitioning from an Auto Draft to Published shouldn't result in a notification.
+		if ( $post_before->post_status === 'auto-draft' && $post_after->post_status === 'publish' )
 			return;
-                	
+
+		// If we're purely saving a draft, and don't have the draft option enabled, skip. If we're transitioning one way or the other, send a notification.
+		if ( 0 == $options['drafts'] && in_array( $post_before->post_status, array( 'draft', 'auto-draft' ) ) && 'draft' == $post_after->post_status )
+			return;
+
 		if ( isset( $_POST['autosave'] ) )
 			return;
 
@@ -78,8 +83,8 @@ class Email_Post_Changes {
 		$this->right_post = $post_after;
 
 		// If this is a new post, set an empty title for $this->left_post so that it appears in the diff.
-                $child_posts = wp_get_post_revisions( $post_id, array( 'numberposts' => 1 ) );
-                if ( count( $child_posts ) == 0 ) {
+		$child_posts = wp_get_post_revisions( $post_id, array( 'numberposts' => 1 ) );
+		if ( count( $child_posts ) == 0 ) {
 			$this->left_post->post_title = '';
 		}
 
@@ -125,71 +130,6 @@ class Email_Post_Changes {
 		$the_permalink = esc_url( get_permalink( $this->right_post->ID ) );
 		$the_edit_link = esc_url( get_edit_post_link( $this->right_post->ID ) );
 
-		$left_title = __( 'Revision' );
-		$right_title = sprintf( __( 'Current %s' ), $post_type = ucfirst( $this->right_post->post_type ) );
-
-		$head_sprintf = __( '%s made the following changes to the %s %s on %s' );
-
-
-		// HTML
-		$html_diff_head  = '<h2>' . sprintf( __( '%s changed' ), $post_type ) . "</h2>\n";
-		$html_diff_head .= '<p>' . sprintf( $head_sprintf,
-			esc_html( $the_author ),
-			sprintf( _x( '&#8220;%s&#8221; [%s]', '1 = link, 2 = "edit"' ),
-				"<a href='$the_permalink'>" . esc_html( $the_title ) . '</a>',
-				"<a href='$the_edit_link'>" . __( 'edit' ) . '</a>'
-			),
-			$this->right_post->post_type,
-			$the_date
-		) . "</p>\n\n";
-
-		$html_diff_head .= "<table style='width: 100%; border-collapse: collapse; border: none;'><tr>\n";
-		$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $left_title ) . ' @ ' . esc_html( $this->left_post->post_date_gmt ) . "</td>\n";
-		$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $right_title ) . ' @ ' . esc_html( $this->right_post->post_modified_gmt ) . "</td>\n";
-		$html_diff_head .= "</tr></table>\n\n";
-
-		$html_diff = '';
-		foreach ( $html_diffs as $field_title => $diff ) {
-			$html_diff .= '<h3>' . esc_html( $field_title ) . "</h3>\n";
-			$html_diff .= "$diff\n\n";
-		}
-
-		$html_diff = rtrim( $html_diff );
-
-		// Replace classes with inline style
-		$html_diff = str_replace( "class='diff'", 'style="width: 100%; border-collapse: collapse; border: none; white-space: pre-wrap; word-wrap: break-word; font-family: Consolas,Monaco,Courier,monospace;"', $html_diff );
-		$html_diff = preg_replace( '#<col[^>]+/?>#i', '', $html_diff );
-		$html_diff = str_replace( "class='diff-deletedline'", 'style="padding: 5px; width: 50%; background-color: #fdd;"', $html_diff );
-		$html_diff = str_replace( "class='diff-addedline'", 'style="padding: 5px; width: 50%; background-color: #dfd;"', $html_diff );
-		$html_diff = str_replace( "class='diff-context'", 'style="padding: 5px; width: 50%;"', $html_diff );
-		$html_diff = str_replace( '<td>', '<td style="padding: 5px;">', $html_diff );
-		$html_diff = str_replace( '<del>', '<del style="text-decoration: none; background-color: #f99;">', $html_diff );
-		$html_diff = str_replace( '<ins>', '<ins style="text-decoration: none; background-color: #9f9;">', $html_diff );
-		$html_diff = str_replace( array( '</td>', '</tr>', '</tbody>' ), array( "</td>\n", "</tr>\n", "</tbody>\n" ), $html_diff );
-
-		$html_diff = $html_diff_head . $html_diff;
-
-
-		// Refactor some of the meta data for TEXT
-		$length = max( strlen( $left_title ), strlen( $right_title ) );
-		$left_title = str_pad( $left_title, $length + 2 );
-		$right_title = str_pad( $right_title, $length + 2 );
-
-		// TEXT
-		$text_diff  = sprintf( $head_sprintf, $the_author, '"' . $the_title . '"', $this->right_post->post_type, $the_date ) . "\n";
-		$text_diff .= "URL:  $the_permalink\n";
-		$text_diff .= "Edit: $the_edit_link\n\n";
-
-		foreach ( $text_diffs as $field_title => $diff ) {
-			$text_diff .= "$field_title\n";
-			$text_diff .= "===================================================================\n";
-			$text_diff .= "--- $left_title	({$this->left_post->post_date_gmt})\n";
-			$text_diff .= "+++ $right_title	({$this->right_post->post_modified_gmt})\n";
-			$text_diff .= "$diff\n\n";
-		}
-
-		$this->text_diff = $text_diff = rtrim( $text_diff );
-
 
 		// Send email
 		$charset = apply_filters( 'wp_mail_charset', get_option( 'blog_charset' ) );
@@ -216,14 +156,83 @@ class Email_Post_Changes {
 		$emails = apply_filters( 'email_post_changes_emails', $emails, $this->left_post->ID, $this->right_post->ID );
 
 		foreach ( $emails as $email ) {
+			do_action( 'email_post_changes_before_email_generation', $email );
+
+			$left_title = __( 'Revision' );
+			$right_title = sprintf( __( 'Current %s' ), $post_type = ucfirst( $this->right_post->post_type ) );
+
+			$head_sprintf = __( '%s made the following changes to the %s %s on %s' );
+
+
+			// HTML
+			$html_diff_head  = '<h2>' . sprintf( __( '%s changed' ), $post_type ) . "</h2>\n";
+			$html_diff_head .= '<p>' . sprintf( $head_sprintf,
+				esc_html( $the_author ),
+				sprintf( _x( '&#8220;%s&#8221; [%s]', '1 = link, 2 = "edit"' ),
+					"<a href='$the_permalink'>" . esc_html( $the_title ) . '</a>',
+					"<a href='$the_edit_link'>" . __( 'edit' ) . '</a>'
+				),
+				$this->right_post->post_type,
+				$the_date
+			) . "</p>\n\n";
+
+			$html_diff_head .= "<table style='width: 100%; border-collapse: collapse; border: none;'><tr>\n";
+			$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $left_title ) . ' @ ' . esc_html( $this->left_post->post_date_gmt ) . "</td>\n";
+			$html_diff_head .= "<td style='width: 50%; padding: 0; margin: 0;'>" . esc_html( $right_title ) . ' @ ' . esc_html( $this->right_post->post_modified_gmt ) . "</td>\n";
+			$html_diff_head .= "</tr></table>\n\n";
+
+			$html_diff = '';
+			foreach ( $html_diffs as $field_title => $diff ) {
+				$html_diff .= '<h3>' . esc_html( $field_title ) . "</h3>\n";
+				$html_diff .= "$diff\n\n";
+			}
+
+			$html_diff = rtrim( $html_diff );
+
+			// Replace classes with inline style
+			$html_diff = str_replace( "class='diff'", 'style="width: 100%; border-collapse: collapse; border: none; white-space: pre-wrap; word-wrap: break-word; font-family: Consolas,Monaco,Courier,monospace;"', $html_diff );
+			$html_diff = preg_replace( '#<col[^>]+/?>#i', '', $html_diff );
+			$html_diff = str_replace( "class='diff-deletedline'", 'style="padding: 5px; width: 50%; background-color: #fdd;"', $html_diff );
+			$html_diff = str_replace( "class='diff-addedline'", 'style="padding: 5px; width: 50%; background-color: #dfd;"', $html_diff );
+			$html_diff = str_replace( "class='diff-context'", 'style="padding: 5px; width: 50%;"', $html_diff );
+			$html_diff = str_replace( '<td>', '<td style="padding: 5px;">', $html_diff );
+			$html_diff = str_replace( '<del>', '<del style="text-decoration: none; background-color: #f99;">', $html_diff );
+			$html_diff = str_replace( '<ins>', '<ins style="text-decoration: none; background-color: #9f9;">', $html_diff );
+			$html_diff = str_replace( array( '</td>', '</tr>', '</tbody>' ), array( "</td>\n", "</tr>\n", "</tbody>\n" ), $html_diff );
+
+			$html_diff = $html_diff_head . $html_diff;
+
+
+			// Refactor some of the meta data for TEXT
+			$length = max( strlen( $left_title ), strlen( $right_title ) );
+			$left_title = str_pad( $left_title, $length + 2 );
+			$right_title = str_pad( $right_title, $length + 2 );
+
+			// TEXT
+			$text_diff  = sprintf( $head_sprintf, $the_author, '"' . $the_title . '"', $this->right_post->post_type, $the_date ) . "\n";
+			$text_diff .= "URL:  $the_permalink\n";
+			$text_diff .= "Edit: $the_edit_link\n\n";
+
+			foreach ( $text_diffs as $field_title => $diff ) {
+				$text_diff .= "$field_title\n";
+				$text_diff .= "===================================================================\n";
+				$text_diff .= "--- $left_title	({$this->left_post->post_date_gmt})\n";
+				$text_diff .= "+++ $right_title	({$this->right_post->post_modified_gmt})\n";
+				$text_diff .= "$diff\n\n";
+			}
+
+			$this->text_diff = $text_diff = rtrim( $text_diff );
+
 			wp_mail(
 				$email,
 				sprintf( __( '[%s] %s changed: %s' ), $blogname, $post_type, $title ),
 				$html_diff
 			);
+
+			do_action( 'email_post_changes_after_email_sent', $email );
 		}
 
-		remove_action( 'phpmailer_init', array( &$this, 'phpmailer_init' ) );
+		remove_action( 'phpmailer_init', array( $this, 'phpmailer_init' ) );
 
 		do_action( 'email_post_changes_email_sent' );
 	}
@@ -260,7 +269,8 @@ class Email_Post_Changes {
 		add_settings_field( self::ADMIN_PAGE . '_post_types', __( 'Post Types' ), array( $this, 'post_types_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 		add_settings_field( self::ADMIN_PAGE . '_drafts', __( 'Drafts' ), array( $this, 'drafts_setting' ), self::ADMIN_PAGE, self::ADMIN_PAGE );
 
-		add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
+		$hook = add_options_page( __( 'Email Post Changes' ), __( 'Email Post Changes' ), 'manage_options', self::ADMIN_PAGE, array( $this, 'admin_page' ) );
+		add_action( "admin_head-$hook", array( $this, 'admin_page_head' ) );
 	}
 
 	function validate_options( $options ) {
@@ -299,7 +309,7 @@ class Email_Post_Changes {
 				$return['emails'] = $this->defaults['emails'];
 
 			// Don't store a huge list of invalid emails addresses in the option
-			if ( isset ( $return['invalid_emails'] ) && count( $return['invalid_emails'] ) > 200 ) {
+			if ( isset( $return['invalid_emails'] ) && count( $return['invalid_emails'] ) > 200 ) {
 				$return['invalid_emails'] = array_slice( $return['invalid_emails'], 0, 200 );
 				$return['invalid_emails'][] = __( 'and many more not listed here' );
 			}
@@ -322,6 +332,29 @@ class Email_Post_Changes {
 		do_action( 'email_post_changes_validate_options', $this->get_options(), $return );
 
 		return $return;
+	}
+
+	function admin_page_head() {
+?>
+<style>
+.epc-registered-user-selection {
+	overflow: auto;
+	max-height: 300px;
+	max-width: 40em;
+	border: 1px solid #ccc;
+	background-color: #fafafa;
+	padding: 12px;
+	box-sizing: border-box;
+}
+.epc-registered-user-selection ul {
+	margin: 0;
+	padding: 0;
+}
+.epc-additional-emails {
+	width: 40em;
+}
+</style>
+<?php
 	}
 
 	function admin_page() {
@@ -359,7 +392,7 @@ class Email_Post_Changes {
 	function users_setting() {
 		$options = $this->get_options();
 ?>
-		<div style="overflow: auto; max-height: 300px;">
+		<div class="epc-registered-user-selection">
 			<ul>
 <?php		$users = get_users();
 		usort( $users, array( $this, 'sort_users_by_display_name' ) );
@@ -380,7 +413,7 @@ class Email_Post_Changes {
 	function emails_setting() {
 		$options = $this->get_options();
 ?>
-		<textarea rows="4" cols="40" style="width: 40em;" name="email_post_changes[emails]"><?php echo esc_html( join( "\n", $options['emails'] ) ); ?></textarea>
+		<textarea class="epc-additional-emails" rows="4" cols="40" name="email_post_changes[emails]"><?php echo esc_html( join( "\n", $options['emails'] ) ); ?></textarea>
 		<p class="description"><?php _e( 'One email address per line.' ); ?></p>
 <?php
 	}
