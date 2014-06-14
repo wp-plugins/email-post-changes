@@ -34,10 +34,14 @@ class Email_Post_Changes {
 
 		$options = $this->get_options();
 
-		if ( $options['enable'] )
+		if ( $options['enable'] ) {
 			add_action( 'post_updated', array( $this, 'post_updated' ), 10, 3 );
-		if ( current_user_can( 'manage_options' ) )
+			add_action( 'epc_new_bbpress_item', array( $this, 'post_updated' ), 10, 3 );  // Support for bbPress 2
+		}
+
+		if ( current_user_can( 'manage_options' ) ) {
 			add_action( 'admin_menu', array( $this, 'admin_menu' ), 115 );
+		}
 	}
 
 	function get_post_types() {
@@ -73,8 +77,9 @@ class Email_Post_Changes {
 		if ( 0 == $options['drafts'] && in_array( $post_before->post_status, array( 'draft', 'auto-draft' ) ) && 'draft' == $post_after->post_status )
 			return;
 
-		if ( isset( $_POST['autosave'] ) )
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
+		}
 
 		if ( !in_array( $post_before->post_type, $options['post_types'] ) )
 			return;
@@ -273,6 +278,11 @@ class Email_Post_Changes {
 		add_action( "admin_head-$hook", array( $this, 'admin_page_head' ) );
 	}
 
+	// Used in validate_options to array_walk the list of email addresses
+	function trim_email( &$email, $key ) {
+		$email = trim( $email );
+	}
+
 	function validate_options( $options ) {
 		if ( !$options || !is_array( $options ) )
 			return $this->defaults;
@@ -295,6 +305,7 @@ class Email_Post_Changes {
 		} else {
 			$_emails = is_string( $options['emails'] ) ? preg_split( '(\n|\r)', $options['emails'], -1, PREG_SPLIT_NO_EMPTY ) : array();
 			$_emails = array_unique( $_emails );
+			array_walk( $_emails, array( 'Email_Post_Changes', 'trim_email' ) );
 			$emails = array_filter( $_emails, 'is_email' );
 
 			$invalid_emails = array_diff( $_emails, $emails );

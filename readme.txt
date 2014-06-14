@@ -3,7 +3,7 @@ Contributors: mdawaffe, automattic, viper007bond, nickmomrik, dllh, iandunn
 Tags: email, diff, post, page, change
 Requires at least: 3.2
 Tested up to: 3.9.1
-Stable tag: 1.7
+Stable tag: 1.7.1
 
 Emails you whenever a change to a post or page is made.
 
@@ -26,7 +26,10 @@ You can change what email addresses to use and for what post types you want chan
 
 == Changelog ==
 
-= 1.7 = 
+= 1.7.1 =
+* Fixed a bug where emails would be sent during autosaves in WordPress 3.9
+
+= 1.7 =
 * Send e-mails to each recipient individually, so that the recipients won't see who else recieved the message.
 * Added the `email_post_changes_admin_email_fallback` filter.
 * Fixed a PHP notice about $blog_id being undefined.
