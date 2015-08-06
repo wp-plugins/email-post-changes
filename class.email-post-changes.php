@@ -373,7 +373,7 @@ class Email_Post_Changes {
 ?>
 
 <div class="wrap">
-	<h2><?php _e( 'Email Post Changes' ); ?></h2>
+	<h1><?php _e( 'Email Post Changes' ); ?></h1>
 <?php	if ( !empty( $options['invalid_emails'] ) && $_GET['settings-updated'] ) : ?>
 	<div class="error">
 		<p><?php printf( _n( 'Invalid Email: %s', 'Invalid Emails: %s', count( $options['invalid_emails'] ) ), '<kbd>' . join( '</kbd>, <kbd>', array_map( 'esc_html', $options['invalid_emails'] ) ) ); ?></p>
